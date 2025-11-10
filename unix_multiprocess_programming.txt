@@ -1,0 +1,270 @@
+# UNIX Multi-Process Programming Examples
+
+## PID related functions
+
+```c
+#include <sys/types.h>
+#include <unistd.h>
+
+pid_t fork(void);
+
+// fork returns:
+//  - In parent : pid of the child
+//  - In child  : 0
+//  - -1 on error
+
+pid_t wait(int *status);
+```
+
+---
+
+## Basic fork example
+
+```c
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main() {
+    pid_t pid = fork();
+    if (pid == 0) {
+        printf("Child Process\n");
+    } else {
+        printf("Parent Process\n");
+    }
+    return 0;
+}
+```
+
+---
+
+## fork() returns twice example
+
+```c
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main() {
+    fork();
+    printf("Hello world!\n");
+    return 0;
+}
+```
+
+---
+
+## Multiple fork() calls
+
+```c
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main() {
+    fork();
+    printf("Hi!\n");
+    fork();
+    printf("Hello!\n");
+    return 0;
+}
+```
+
+Output example:
+```
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+```
+
+Because `n = 3`, total processes = 2^3 = 8.
+
+---
+
+## fork() nested example
+
+```c
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main() {
+    fork();
+    fork();
+    fork();
+    printf("hello\n");
+    return 0;
+}
+```
+
+---
+
+## forkexample() demonstration
+
+```c
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+void forkexample() {
+    if (fork() == 0)
+        printf("Hello from Child!\n");
+    else
+        printf("Hello from Parent!\n");
+}
+
+int main() {
+    forkexample();
+    return 0;
+}
+```
+
+---
+
+## fork() with variable modification
+
+```c
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+void forkexample() {
+    int x = 1;
+    if (fork() == 0)
+        printf("Child has x = %d\n", ++x);
+    else
+        printf("Parent has x = %d\n", --x);
+}
+
+int main() {
+    forkexample();
+    return 0;
+}
+```
+
+---
+
+## fork() with wait()
+
+```c
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+
+pid_t num_pid;
+
+int main() {
+    num_pid = fork(); /* return value of fork */
+
+    if (num_pid < 0)
+        printf("Error in fork execution");
+    else if (num_pid == 0) /* child process */
+        printf("This is the child process id %d\n", getpid());
+    else { /* parent process */
+        printf("This is the parent id %d\n", getpid());
+        wait(NULL);
+    }
+
+    exit(0);
+}
+```
+
+---
+
+## Process Management Tasks
+
+Write a program using fork to create a child process:
+
+a) Parent process sorts numbers in ascending order  
+b) Child process sorts numbers in descending order  
+c) Orphan Process  
+d) Zombie process
+
+---
+
+# Zombie Processes
+
+A zombie process is a process whose execution is completed but still has an entry in the process table.
+They occur for child processes because the parent process still needs to read its child’s exit status.
+Once this is done using the `wait()` system call, the zombie process is eliminated.
+
+---
+
+## Zombie process example
+
+```c
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void) {
+    pid_t pid;
+    if ((pid = fork()) < 0)
+        printf("fork error\n");
+    else if (pid == 0)
+        printf("child process id is %d\n", getpid());
+    else {
+        sleep(10);
+        printf("***** parent *****\n");
+        system("ps -axj | tail");
+    }
+    exit(0);
+}
+```
+
+Output snippet:
+```
+child id is 3925
+***** parent *****
+3924 3925 Z+ 1001 0:00 [a.out] <defunct>
+```
+
+---
+
+# Orphan Processes
+
+Orphan processes are those that continue running even though their parent has terminated.  
+Once the parent dies, the orphaned process is adopted by the `init` process.
+
+---
+
+## Orphan process example
+
+```c
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main() {
+    int pid = fork();
+    if (pid > 0) {
+        printf("parent process id %d\n", getpid());
+        printf("child process id %d\n", pid);
+    } else if (pid == 0) {
+        sleep(10);
+        printf("child process id %d\n", getpid());
+        printf("parent process id %d\n", getppid());
+    }
+    return 0;
+}
+```
+
+Output:
+```
+parent process id 136
+child process id 137
+
+(child runs later)
+child process id 137
+parent process id 1
+```
+
+---
