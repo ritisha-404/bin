@@ -1,0 +1,249 @@
+# Shell Scripting Examples and Commands
+
+## Create a script in simulator
+
+### Steps:
+1. Open the simulator: https://bellard.org/jslinux/
+2. Select the second last option: **riscv64 Fedora 33 (Linux) ConsoleYes click here**
+3. Open the nano editor:
+```bash
+# nano first.sh
+```
+4. Type the script:
+```bash
+#!/bin/bash
+echo "Hello World"
+```
+5. Save and quit to the prompt:
+- Press `Ctrl + O`, then `Ctrl + X`
+6. Run the script:
+```bash
+# bash first.sh
+```
+
+---
+
+## Create a script (without simulator)
+
+Use `gedit` as text editor for shell scripting.
+
+Example:
+```bash
+$ gedit hello
+```
+Type the following inside it:
+```bash
+#!/bin/bash
+echo "Hello World"
+```
+The first line tells Linux to use the bash interpreter to run this script as `hello.sh`.
+
+---
+
+## Make the script executable
+
+Syntax to setup executable permission:
+```bash
+$ chmod +x your-script-name
+$ chmod 755 your-script-name
+```
+
+---
+
+## Run a script (execute a script)
+
+Different ways to run the script:
+```bash
+$ bash your-script-name
+$ sh your-script-name
+$ ./your-script-name
+```
+
+Example:
+```bash
+$ bash hello
+$ sh hello
+$ ./hello
+```
+
+---
+
+## Example (hello script)
+```bash
+#!/bin/bash
+echo "Hello, world!"
+```
+Output:
+```bash
+$ chmod +x hello
+$ ./hello
+Hello, world!
+```
+
+---
+
+## Variables in Shell
+
+Variables are global within a script.
+
+Types of variables:
+- **System variables**: Created and maintained by Linux itself. Defined in CAPITAL LETTERS.
+- **User defined variables (UDV)**: Created and maintained by user. Defined in lowercase.
+
+Syntax:
+```bash
+variable_name=value
+```
+
+Examples:
+```bash
+mylang="Pennsylvania Dutch"
+echo "I speak $mylang."
+echo 'I speak $mylang.'
+
+vech=Bus
+n=10
+echo $vech
+echo $n
+```
+
+---
+
+## Input / Output
+
+Use the `read` command to prompt for input from user:
+```bash
+read var_name
+```
+
+Example:
+```bash
+echo "Your first name please:"
+read fname
+echo "Hello $fname, Let's be friends!"
+```
+
+---
+
+## Conditional Control Statement: if
+
+Syntax:
+```bash
+if condition
+then
+    command1   # if condition is true
+fi
+```
+
+Example:
+```bash
+echo "Enter a number"
+read choice
+if [ $choice -gt 0 ]
+then
+    echo "$choice number is positive"
+else
+    echo "$choice number is negative"
+fi
+```
+
+---
+
+## Loops in Shell Scripts
+
+### for Loop
+Syntax:
+```bash
+for var in list
+do
+    # commands
+done
+```
+Example:
+```bash
+for i in 1 2 3 4 5
+do
+    echo "Welcome $i times"
+done
+```
+
+### while Loop
+Syntax:
+```bash
+while [ condition ]
+do
+    commands
+done
+```
+Example:
+```bash
+i=1; n=1
+while [ $i -le 10 ]
+do
+    echo "$n * $i =" `expr $i \* $n`
+    i=`expr $i + 1`
+done
+```
+
+---
+
+## case Statement in Shell Scripts
+
+Syntax:
+```bash
+case $variable-name in
+pattern1) command ;; 
+pattern2) command ;; 
+patternN) command ;; 
+*) command ;; # default case
+esac
+```
+
+Example:
+```bash
+read var
+case $var in
+    1) echo "One" ;;
+    2) echo "Two" ;;
+    3) echo "Three" ;;
+    4) echo "Four" ;;
+    *) echo "Sorry, it is bigger than Four" ;;
+esac
+```
+
+---
+
+## String Conversion Examples
+
+### Uppercase to Lowercase
+```bash
+VAR1=BASHSHELLSCRIPTING
+echo $VAR1 | tr '[A-Z]' '[a-z]'
+```
+
+### Lowercase to Uppercase
+```bash
+VAR1=bashshellscripting
+echo $VAR1 | tr '[a-z]' '[A-Z]'
+```
+
+### Convert only first character to uppercase
+```bash
+VAR1=bashshell
+VAR2=${VAR1^}
+echo $VAR2
+```
+
+### Convert specific characters (like a, d, e)
+```bash
+VAR1=bashshell
+VAR2=${VAR1^^[ade]}
+echo $VAR2
+```
+
+### Convert only first character to lowercase
+```bash
+VAR1=SURENDRAKUMAR
+VAR2=${VAR1,}
+echo $VAR2
+```
