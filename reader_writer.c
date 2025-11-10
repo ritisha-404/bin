@@ -33,6 +33,8 @@ printf("\nWriter CHANGED THE VALUE OF SHARED VAR TO %d",sharedvar);
 sem_post(&wrt);
 printf("\nWriter is out of CS");
 }
+
+//gcc reader_writers.c -lpthread -o readers_writers
 int main()
 {
 int n2,i;
